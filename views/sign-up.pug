@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    h1 Sign up
+    form(method="POST" action="")
+        .form-group
+            label(for="username") Username:
+            input(type="text" placeholder="Username" name="username" required="true")
+            label(for="first-name") First name:
+            input(type="text" placeholder="First name" name="first-name" required="true")
+            label(for="last-name") Last name:
+            input(type="text" placeholder="Last name" name="last-name" required="true")
+            label(for="password") Password:
+            input(type="password" name="password" required="true")
+        button(type="submit") Submit
