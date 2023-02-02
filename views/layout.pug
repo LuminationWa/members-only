@@ -2,6 +2,18 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet", href="/stylesheets/layout.css")
   body
-    block content
+    nav(class="nav-bar")
+      ul
+        li
+          a(href="/") Home
+        li
+          a(href="/sign-up") Sign Up
+        li
+          a(href="/login") Log in
+        //This should be if logged in
+        li
+          a(href="/membership") Become a member
+    div(class="content")
+      block content

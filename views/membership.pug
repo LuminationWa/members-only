@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    if user 
+        h1 Manage membership 
+        p Membership status: #{user.membership}
+        p #{user}
+    if !user.membership
+            form(method="POST" action="")
+            label(for="keyword") Enter secret keyword to become a member
+            input(type="text", name="keyword")
+            input(type="submit", value="Submit")      
