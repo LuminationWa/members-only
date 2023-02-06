@@ -2,6 +2,8 @@ extends layout
 
 block content
     h1 Log in
+    if error
+        p aliens
     form(method="POST" action="")
         .form-group
             label(for="username") Username:

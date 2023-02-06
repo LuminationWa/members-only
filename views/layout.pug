@@ -8,12 +8,15 @@ html
       ul
         li
           a(href="/") Home
-        li
-          a(href="/sign-up") Sign Up
-        li
-          a(href="/login") Log in
-        //This should be if logged in
-        li
-          a(href="/membership") Become a member
+        if !user
+          li
+            a(href="/login") Log in
+          li
+            a(href="/sign-up") Sign Up
+        if user 
+          a(href="/new-post") New post
+        if user && user.membership === false
+          li
+            a(href="/membership") Become a member
     div(class="content")
       block content

@@ -12,7 +12,7 @@ const Schema = mongoose.Schema;
 passport.use(
   new LocalStrategy((username, password, done) => {
     User.findOne({ username: username }, (err, user) => {
-      if (err) { 
+      if (err) {
         return done(err);
       }
       if (!user) {
@@ -21,22 +21,22 @@ passport.use(
       bcrypt.compare(password, user.password, (err, res) => {
         if (res) {
           // passwords match! log user in
-          return done(null, user)
+          return done(null, user);
         } else {
           // passwords do not match!
-          return done(null, false, { message: "Incorrect password" })
+          return done(null, false, { message: "Incorrect password" });
         }
       });
     });
   })
 );
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
     done(err, user);
   });
 });
@@ -50,6 +50,7 @@ router.use(express.urlencoded({ extended: false }));
 router.get("/", function (req, res, next) {
   res.render("index", { user: req.user, title: "Express" });
 });
+
 //Sign up
 router.get("/sign-up", function (req, res, next) {
   res.render("sign-up");
@@ -91,6 +92,7 @@ router.post(
     });
   }
 );
+
 //Log in
 router.get("/login", function (req, res, next) {
   res.render("login");
@@ -99,17 +101,20 @@ router.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/a"
-  })
+    failureRedirect: "/login",
+  }),
 );
+
 //Membership
 router.get("/membership", function (req, res, next) {
-  res.render("membership", {user: req.user});
+  res.render("membership", { user: req.user });
 });
 router.post("/membership", (req, res) => {
   // Handle form data here, for example:
-  const keyword = req.body.keyword;
-  if (keyword === "secret") {
+  const reqKeyword = req.body.keyword;
+  const keyword = process.env.membership;
+  console.log("1");
+  if (reqKeyword === keyword) {
     // Update the user's membership status
     User.findByIdAndUpdate(req.user._id, { membership: true }, (err, user) => {
       if (err) {
@@ -118,7 +123,7 @@ router.post("/membership", (req, res) => {
       res.redirect("/membership");
     });
   } else {
-    res.render("membership", { error: "Incorrect keyword" });
+    res.render("membership", { user: req.user, error: "Incorrect keyword" });
   }
 });
 module.exports = router;
