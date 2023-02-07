@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const session = require("express-session");
@@ -48,7 +49,14 @@ router.use(express.urlencoded({ extended: false }));
 
 //Index
 router.get("/", function (req, res, next) {
-  res.render("index", { user: req.user, title: "Express" });
+  Post.find({})
+    .sort({ date: 1 })
+    .exec(function (err, post_list) {
+      if (err) {
+        return next(err);
+      }
+      res.render("index", { user: req.user, title: "Express", post_list });
+    });
 });
 
 //Sign up
@@ -102,8 +110,18 @@ router.post(
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/login",
-  }),
+  })
 );
+
+//Lot out
+router.get("/log-out", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
 
 //Membership
 router.get("/membership", function (req, res, next) {
@@ -113,7 +131,6 @@ router.post("/membership", (req, res) => {
   // Handle form data here, for example:
   const reqKeyword = req.body.keyword;
   const keyword = process.env.membership;
-  console.log("1");
   if (reqKeyword === keyword) {
     // Update the user's membership status
     User.findByIdAndUpdate(req.user._id, { membership: true }, (err, user) => {
@@ -124,6 +141,23 @@ router.post("/membership", (req, res) => {
     });
   } else {
     res.render("membership", { user: req.user, error: "Incorrect keyword" });
+  }
+});
+
+//New post
+router.post("/new-post", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const post = new Post({
+      date: new Date().toLocaleDateString(),
+      text: req.body.text,
+      author: user._id,
+    });
+
+    await post.save();
+    res.redirect("/");
+  } catch (error) {
+    return next(error);
   }
 });
 module.exports = router;

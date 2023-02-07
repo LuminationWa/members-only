@@ -9,4 +9,27 @@ block content
       li
         a(href="/membership") Manage membership status
       li
-        a(href="/new-post") Post
+        button.btn.btn-primary(type="button", data-toggle="modal", data-target="#postModal") Add new message
+    .modal.fade(id="postModal", tabindex="-1", role="dialog", aria-labelledby="exampleModalLabel", aria-hidden="true")
+      .modal-dialog(role="document")
+        .modal-content
+          .modal-header
+            h5.modal-title#exampleModalLabel New message
+            button.close(type="button", data-dismiss="modal", aria-label="Close")
+              span(aria-hidden="true") &times;
+          form(method="POST" action="new-post")
+            .modal-body
+            input(type="text" placeholder="New post" name="text" required="true")
+            .modal-footer
+              button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+              button.btn.btn-primary(type="submit") Submit
+  each post in post_list
+    .message-card
+      li
+        p #{post.text}
+      if user
+        li
+          p #{post.date}
+        li
+          p #{post.author}
+         
